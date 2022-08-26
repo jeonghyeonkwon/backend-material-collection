@@ -113,4 +113,6 @@
 
 ### 출처
 
-[https://oingdaddy.tistory.com/28](https://oingdaddy.tistory.com/28)
+- [https://oingdaddy.tistory.com/28](https://oingdaddy.tistory.com/28)
+
+- [https://www.youtube.com/watch?v=cc4M-GS9DoY&t=601s](https://www.youtube.com/watch?v=cc4M-GS9DoY&t=601s)
