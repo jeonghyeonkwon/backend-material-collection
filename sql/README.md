@@ -28,7 +28,11 @@
 
 ## DB 격리 수준
 
+- 오라클은 기본 READ-COMMITTED MY-SQL은 REPEATABLE READ
+
 ### Read Uncomitted
+
+- 사용 하지 않음
 
 ### Read Committed
 
@@ -48,5 +52,65 @@
 - 인덱스 잠금이나 조건 기반 잠금 등 사용
   - 업데이트가 일어나고 커밋되기 전까지 다른 update에 대한 것은 다 거부
 
-* 출처
-  [https://www.youtube.com/watch?v=poyjLx-LOEU&t=4s](https://www.youtube.com/watch?v=poyjLx-LOEU&t=4s)
+### 출처
+
+[https://www.youtube.com/watch?v=poyjLx-LOEU&t=4s](https://www.youtube.com/watch?v=poyjLx-LOEU&t=4s)
+
+## JPA @Transactional 관련
+
+- 스프링 AOP를 통해 구현되어 있다.
+
+### 트랜잭션 속성
+
+#### propagation
+
+- 트랙잭션 시작이나 기존 트랜잭션에 참여하는 방법을 결정
+
+- 부모 메소드와 자식 메소드에 각각 트랙잭션을 어떻게 처리 할 것인가?를 결정
+
+- REQUIRED
+
+  - 기본 전파 속성
+  - 트랙잭션이 있다면 참여하고 없다면 새로 참여
+  - 부모 메소드나 자식 메소드 둘 중 하나만 잘못되면 다 같이 롤백
+
+- REQUIRES_NEW
+
+  - 항상 새로운 트랙잭션 실행
+  - 진행 중인 트랙잭션이 있다면 그 트랜잭션 보류 후 끝나면 실행
+  - 새로운 트랙잭션이기 때문에 부모 자식 메서드 간의 예외로 인한 롤백 관계는 없다.
+  - 즉 부모가 예외로 롤백이면 부모만 롤백 자식이 예외로 롤백이면 자식만
+
+- SUPPORTS
+
+  - 부모 메소드에 트랜잭션이 있으면 자식 메소드도 그 안에 포함
+  - 없다면 자식은 트랜잭션 없이 실행
+
+- NESTED
+
+  - 부모 트랜잭션이 있다면 자식은 중첩 트랜잭션 생성
+  - 부모가 롤백이나 커밋되면 자식은 영향을 받음
+  - 중첩으로 실행되기 때문에 자식이 롤백 커밋되도 부모는 영향 안받음
+
+- NEVER, NOT_SUPPORTED
+  - 트랜잭션을 사용안함
+  - NEVER : 부모 메소드에서 트랜잭션이 있다면 예외 발생
+  - NOT_SUPPORTED : 부모 메소드에 트랜잭션이 있다면 잠시 보류
+
+* MANDATORY
+  - 부모 메소드에 트랜잭션이 있다면 자식 메소드는 트랜잭션 포함
+  - 부모 메소드에 트랜잭션이 없다면 예외 터트림
+
+#### isolation
+
+#### read-only
+
+#### timeout
+
+#### rollback-for
+
+#### no-rollback-for
+
+### 출처
+
+[https://oingdaddy.tistory.com/28](https://oingdaddy.tistory.com/28)
