@@ -33,6 +33,7 @@
 ### Read Uncomitted
 
 - 사용 하지 않음
+- 커밋 전에 값만 수정해도 다른 트랜잭션이 조회하면 바뀐 값이 출력된다.
 
 ### Read Committed
 
@@ -103,13 +104,25 @@
 
 #### isolation
 
+- DB의 격리 수준을 제어하는 옵션
+- READ_UNCOMMITTED, READ_COMMITTED, REPEATABLE_READ, SERIALIZABLE
+
 #### read-only
+
+- 트랜잭션 내에서 데이터를 조작하려는 시도를 막는다
 
 #### timeout
 
+- 트랜잭션을 수행하는 시간을 제어할 수 있다. 기본은 제한시간이 없다
+
 #### rollback-for
 
+- 기본적으로 RuntimeException시 롤백
+- 타깃이 되는 Exception이 터질시 롤백시키고 싶을때 사용
+
 #### no-rollback-for
+
+- 타깃이 되는 Exception이 터져도 롤백 시키고 싶지 않을때 사용
 
 ### 출처
 
