@@ -15,11 +15,22 @@
 - db에서 하는 것이 아닌 application에서 거는 락
 
 ### Pessimistic(비관적인) Lock
+
 - 미리 충돌날 것이라 보고 조회 할 때부터 db에 락을 검
-- 한 명이 가지고 오면 다른 한 사람은 대기 해야됨
+- 한 명이 가지고 오면 다른 한 사람은 대기 해야 됨
 - 데드락의 위험성
 - 종류
+  - Shared Lock : 읽을 수는 있지만 UPDATE, DELETE 방지
+  - Exclusive Lock : 읽기, 수정, 삭제 모두 방지
 
+### 데드락
+
+- 락으로 인해 발생
+- 트랜잭션 1이 A를 락 B를 조회, 트랜잭션 2가 B를 락 A를 조회 하면 발생(A와 B는 각각 1개의 행)
+
+### 참고 자료
+
+[https://www.youtube.com/watch?v=w6sFR3ZM64c&t=306s](https://www.youtube.com/watch?v=w6sFR3ZM64c&t=306s)
 
 ## DB 격리 수준
 
@@ -87,7 +98,7 @@
 
 - 트랙잭션 시작이나 기존 트랜잭션에 참여하는 방법을 결정
 
-- 부모 메소드와 자식 메소드에 각각 트랙잭션을 어떻게 처리 할 것인가?를 결정
+- 부모 메소드와 자식 메소드에 각각 트랙잭션을 어떻게 처리 할 것인가? 를 결정
 
 - REQUIRED
 
@@ -149,3 +160,46 @@
 - [https://oingdaddy.tistory.com/28](https://oingdaddy.tistory.com/28)
 
 - [https://www.youtube.com/watch?v=cc4M-GS9DoY&t=601s](https://www.youtube.com/watch?v=cc4M-GS9DoY&t=601s)
+
+## JPA 동시성 문제 해결
+
+### synchronized를 이용해서 문제 해결
+
+#### 장점
+
+- 스레드를 1개 사용하므로 동시성 문제를 해결
+
+#### 단점
+
+- synchronized를 사용하므로 해당 메소드에 @Transactional를 붙이지 못한다
+
+  - @Transactional을 굳이 붙여야 된다면 synchronized로 걸어준 뒤 @Transactional로 처리
+
+  ```java
+    public class SynchronizedService {
+
+      @Autowired
+      private TransactionalService ts;
+
+      public synchronized void request(){
+        ts.request();
+      }
+    }
+
+    @Component
+    public class TransactionalService {
+
+      @Transactional
+      public void request(){
+        //...
+      }
+
+    }
+  ```
+
+- 만약 서버의 갯수가 N개 늘어난다면 한 서버당 1개라도 N개의 스레드가 생기므로 사용 안한다.
+
+### 출처 및 자료
+
+- [인프런 - 재고시스템으로 알아보는 동시성이슈 해결방법 강좌](https://www.inflearn.com/course/%EB%8F%99%EC%8B%9C%EC%84%B1%EC%9D%B4%EC%8A%88-%EC%9E%AC%EA%B3%A0%EC%8B%9C%EC%8A%A4%ED%85%9C/dashboard)
+- [인프런 - 재고시스템으로 알아보는 동시성이슈 해결방법 강좌 transactional 답변](https://www.inflearn.com/questions/619166)
