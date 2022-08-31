@@ -159,7 +159,7 @@ public class Item{
 
 ```
 
-repository
+ItemRepository
 
 ```java
 public interface ItemRepository extends JpaRepository<Item,Long>{
@@ -204,6 +204,58 @@ private ItemFacade{
 | -------------------------- | -------------------------- |
 | OPTIMISTIC                 | 낙관적 락 사용             |
 | OPTIMISTIC_FORCE_INCREMENT | 낙관적 락 + 버전 강제 증가 |
+
+### NameLock 이용 문제 해결
+
+- 별도의 곳에 Lock을 검
+
+LockRepository
+
+```java
+
+interface LockRepository extends JpaRepository<Item, Long>{
+    @Query(value = "SELECT get_lock(:key, 3000)", nativeQuery = true)
+    void getLock(String key);
+
+    @Query(value = "SELECT release_lock(:key)", nativeQuery = true)
+    void releaseLock(String key);
+}
+
+```
+
+```java
+
+@Service
+public class NamedLockItemFacade{
+
+  @Autowired
+  private LockRepository lockRepository;
+
+  @Autowired
+  private ItemService itemService;
+
+  @Transactional
+  public void resuest(Long id, Dto dto){
+    try{
+      lockRepository.getLock(id.toString());
+      itemService.request(id,dto);
+    }finally{
+      lockRepository.releaseLock(id.toString());
+    }
+  }
+}
+```
+
+ItemService
+
+```java
+...
+
+@Transactional(propagation = Propagation.REQUIRES_NEW)
+public void request(Long id, Dto dto){
+    ...
+}
+```
 
 ### 출처 및 자료
 
