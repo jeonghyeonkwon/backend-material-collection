@@ -116,7 +116,7 @@
 - 조회 할 때부터 다른 트랜잭션이 못 건들게 락
 
 ```java
-public interface ItemRepository extends JpaRepository<Item,Long>{
+public interface ItemRepository extends JpaRepository<Item,Long> {
 
   @Lock(value = LockModeType.PESSIMISTIC_WRITE)
   @Query("SELECT i FROM Item i WHERE i.id = :id")
@@ -205,7 +205,7 @@ private ItemFacade{
 | OPTIMISTIC                 | 낙관적 락 사용             |
 | OPTIMISTIC_FORCE_INCREMENT | 낙관적 락 + 버전 강제 증가 |
 
-### NameLock 이용 문제 해결
+### NamedLock 이용 문제 해결
 
 - 별도의 곳에 Lock을 검
 
@@ -256,6 +256,15 @@ public void request(Long id, Dto dto){
     ...
 }
 ```
+
+### Lettuce 이용하여 문제 해결
+
+- setnx 명령어를 활용하여 분산락 구현
+- spin lock 방식
+- lock 이 있다면 실패 없다면 성공
+- 구현이 간단하다
+- spring data redis를 이용하면 lettuce가 기본이기 때문에 별도의 라이브러리를 사용하지 않아도 된다
+- spin lock 방식이기 때문에 동시에 많은 스레드가 lock 획득 대기 상태라면 redis에 부하가 갈 수 있다
 
 ### 출처 및 자료
 
