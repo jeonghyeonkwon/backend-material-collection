@@ -266,6 +266,62 @@ public void request(Long id, Dto dto){
 - spring data redis를 이용하면 lettuce가 기본이기 때문에 별도의 라이브러리를 사용하지 않아도 된다
 - spin lock 방식이기 때문에 동시에 많은 스레드가 lock 획득 대기 상태라면 redis에 부하가 갈 수 있다
 
+RedisLockRepository
+
+```java
+
+@Component
+@RequiredArgsConstructor
+public class RedisLockRepository {
+
+    private final RedisTemplate<String,String> redisTemplate;
+
+    public Boolean lock(Long key){
+        return redisTemplate
+                .opsForValue()
+                .setIfAbsent(generateKey(key),"lock", Duration.ofMillis(3_000));
+    }
+    public Boolean unlock(Long key){
+        return redisTemplate.delete(generateKey(key));
+    }
+
+    private String generateKey(Long key) {
+        return key.toString();
+    }
+}
+
+```
+
+LettuceLockStockFacade
+
+```java
+@Component
+public class LettuceLockStockFacade {
+
+    private RedisLockRepository redisLockRepository;
+
+    private StockService stockService;
+
+    public LettuceLockStockFacade(RedisLockRepository redisLockRepository, StockService stockService) {
+        this.redisLockRepository = redisLockRepository;
+        this.stockService = stockService;
+    }
+
+    public void decrease(Long key, Long quantity) throws InterruptedException {
+        while(!redisLockRepository.lock(key)){
+            Thread.sleep(100);
+        }
+
+        try {
+            stockService.decrease(key, quantity);
+        }finally {
+            redisLockRepository.unlock(key);
+        }
+    }
+}
+
+```
+
 ### 출처 및 자료
 
 - 도서 - 자바 ORM 표준 JPA 프로그래밍
