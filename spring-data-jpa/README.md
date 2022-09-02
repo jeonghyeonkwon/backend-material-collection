@@ -322,6 +322,51 @@ public class LettuceLockStockFacade {
 
 ```
 
+### Redisson 이용하여 문제 해결
+
+- pub-sub 기반으로 Lock 구현 제공
+- 채널을 통해 획득 내용 전달
+- 락 획득 재시도를 기본으로 제공한다
+- pub-sub 방식으로 구현되어 있기 때문에 lettuce와 비교했을 때 redis 에 부하가 덜 간다.
+- 별도의 라이브러리를 사용해야 한다
+- lock을 라이브러리 차원에서 제공해주기 때문에 사용법을 공부해야 한다
+
+```java
+
+@Component
+public class RedissonLockStockFacade {
+
+    private RedissonClient redissonClient;
+
+    private StockService stockService;
+
+    public RedissonLockStockFacade(RedissonClient redissonClient, StockService stockService) {
+        this.redissonClient = redissonClient;
+        this.stockService = stockService;
+    }
+
+    public void decrease(Long key, Long quantity){
+        RLock lock = redissonClient.getLock(key.toString());
+
+        try{
+            boolean available = lock.tryLock(5, 1, TimeUnit.SECONDS);
+            // tryLock 관련 참고자료 https://hyperconnect.github.io/2019/11/15/redis-distributed-lock-1.html
+            if(available){
+                System.out.println("lock 획득 실패");
+
+                return;
+            }
+            stockService.decrease(key,quantity);
+        }catch (InterruptedException e){
+            throw new RuntimeException(e);
+        }finally {
+            lock.unlock();
+        }
+    }
+}
+
+```
+
 ### 출처 및 자료
 
 - 도서 - 자바 ORM 표준 JPA 프로그래밍
