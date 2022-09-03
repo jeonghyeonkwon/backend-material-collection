@@ -22,7 +22,6 @@
 ## RDS
 
 - utf 8 설정
-
   - ALTER DATABASE db명 CHARACTER SET = 'utf8mb4' COLLATE = 'utf8mb4_general_ci';
   - 다른 시간 관련, utf 관련 등은 파라미터 그룹으로...
 
@@ -32,7 +31,7 @@
 - IP주소는 있지만 컨트롤 불가능 (주기적으로 변함)
 - 해결법 - 고정 IP를 사용해야 된다
   - NGinX를 이용하고 탄력적 아이피로 구성
-  - NLB(Network Load Balaner) 사용 + 탄력적 IP 사용
+  - NLB(Network Load Balancer) 사용 + 탄력적 IP 사용
 
 ## 롤링
 

@@ -1,4 +1,4 @@
-# DB, SQL 관련
+# 실무용 DB, SQL 관련
 
 ## DB LOCK
 
