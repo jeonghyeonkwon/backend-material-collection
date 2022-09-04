@@ -1,4 +1,4 @@
-# CS 전공 지식
+# CS 전공 지식 - DB
 
 ## MySQL
 
@@ -87,5 +87,6 @@
 - 외래키 지원 X
 - 테이블에 Row Count 가지고 있어 조회 시 빠르다
 
-- 출처 및 자료
-  - [[10분 테코톡] 🔫 우기의 MySQL 아키텍처](https://www.youtube.com/watch?v=vQFGBZemJLQ)
+### 출처 및 자료
+
+- [[10분 테코톡] 🔫 우기의 MySQL 아키텍처](https://www.youtube.com/watch?v=vQFGBZemJLQ)
