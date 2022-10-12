@@ -57,3 +57,27 @@ git clone "레포지토리"
 # 변경 사항이 반영된 레포지토리 가져오기
 git pull
 ```
+
+## branch
+
+```bash
+# branch 목록 확인
+git branch
+
+# branch 생성
+git branch newUser
+
+# branch 이동
+git checkout newUser
+
+# branch 삭제
+git branch -D newUser
+
+# 특정 branch로 push
+git push origin newUser
+
+# branch 깃 허브에서 가져와 최신화 한다
+git pull origin newUser
+
+
+```
